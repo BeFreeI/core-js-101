@@ -23,8 +23,8 @@
  *   getComposition(Math.sin, Math.asin)(x) => Math.sin(Math.asin(x))
  *
  */
-function getComposition(/* f, g */) {
-  throw new Error('Not implemented');
+function getComposition(f, g) {
+  return (x) => f(g(x));
 }
 
 
@@ -44,8 +44,8 @@ function getComposition(/* f, g */) {
  *   power05(16) => 4
  *
  */
-function getPowerFunction(/* exponent */) {
-  throw new Error('Not implemented');
+function getPowerFunction(exponent) {
+  return (x) => x ** exponent;
 }
 
 
@@ -62,8 +62,14 @@ function getPowerFunction(/* exponent */) {
  *   getPolynom(8)     => y = 8
  *   getPolynom()      => null
  */
-function getPolynom() {
-  throw new Error('Not implemented');
+function getPolynom(...a) {
+  return (x) => {
+    let rez = 0;
+    for (let i = 0, j = a.length - 1; i < a.length; j -= 1, i += 1) {
+      rez += a[i] * x ** j;
+    }
+    return rez;
+  };
 }
 
 
@@ -81,8 +87,9 @@ function getPolynom() {
  *   ...
  *   memoizer() => the same random number  (next run, returns the previous cached result)
  */
-function memoize(/* func */) {
-  throw new Error('Not implemented');
+function memoize(func) {
+  const num = func();
+  return () => num;
 }
 
 
@@ -101,8 +108,18 @@ function memoize(/* func */) {
  * }, 2);
  * retryer() => 2
  */
-function retry(/* func, attempts */) {
-  throw new Error('Not implemented');
+function retry(func, attempts) {
+  let rez = attempts;
+  return () => {
+    while (rez > 0) {
+      try {
+        return func();
+      } catch (e) {
+        rez -= 1;
+      }
+    }
+    return func();
+  };
 }
 
 
@@ -129,8 +146,14 @@ function retry(/* func, attempts */) {
  * cos(3.141592653589793) ends
  *
  */
-function logger(/* func, logFunc */) {
-  throw new Error('Not implemented');
+function logger(func, logFunc) {
+  return function name(...a) {
+    const args = JSON.stringify(Array.from(a)).slice(1, -1);
+    logFunc(`${func.name}(${args}) starts`);
+    const result = func.apply(this, a);
+    logFunc(`${func.name}(${args}) ends`);
+    return result;
+  };
 }
 
 
